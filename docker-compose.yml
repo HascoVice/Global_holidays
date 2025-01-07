@@ -1,0 +1,25 @@
+services:
+  backend:
+    environment:
+      - PYTHONUNBUFFERED=1
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend:/app
+    depends_on:
+      - db
+    restart: always
+
+  db:
+    image: mariadb:11.7.1-rc
+    container_name: Database
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
