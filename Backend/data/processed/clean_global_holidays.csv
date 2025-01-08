@@ -1,4 +1,4 @@
-ADM_name,ISO3,Date,Name,Type
+Country_name,Country_code,Date,Travel_reason,Type_of_travel
 Aruba,ABW,2010-01-01,New Year's Day,public holiday
 Aruba,ABW,2010-01-25,Betico Croes' Birthday,public holiday
 Aruba,ABW,2010-02-15,Carnival Monday,public holiday

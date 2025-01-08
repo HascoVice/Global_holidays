@@ -29,4 +29,10 @@ logs:
 data:
 	$(BACKEND) python /app/scripts/data_cleaning.py
 
+create-tables:
+	$(BACKEND) python /app/scripts/create_tables.py
+
+import-data:
+	$(BACKEND) python /app/scripts/import_data.py
+
 default: up
