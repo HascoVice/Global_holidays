@@ -2,13 +2,17 @@ from typing import Union
 
 from fastapi import FastAPI
 import uvicorn
+from api.endpoints import holidays, passengers
 
 app = FastAPI()
 
+# Inclusion des routers
+app.include_router(holidays.router)
+app.include_router(passengers.router)
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"message": "Welcome to the Travel API"}
 
 
 @app.get("/items/{item_id}")
