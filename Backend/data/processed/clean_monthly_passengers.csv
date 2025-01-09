@@ -1,4 +1,4 @@
-ISO3,Year,Month,Total,Domestic,International,Total_OS
+country_code,year,month,total_passenger,domestic,international,total_OS
 ALB,2010,1,2133.74,0.0,0.0,117.35
 ALB,2010,2,2133.74,0.0,0.0,86.535
 ALB,2010,3,2133.74,0.0,0.0,103.795
