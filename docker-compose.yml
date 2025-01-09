@@ -12,6 +12,7 @@ services:
       - db
     restart: always
 
+<<<<<<< Updated upstream
   db:
     image: mariadb:11.7.1-rc
     container_name: Database
@@ -23,3 +24,7 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+=======
+
+
+>>>>>>> Stashed changes
