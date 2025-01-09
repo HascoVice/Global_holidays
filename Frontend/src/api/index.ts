@@ -18,16 +18,19 @@ export const fetchHolidays = async () => {
     return response.data;
 };
 
-export const fetchCountryHolidays = api.get('/holidays/{country_code}').then((res) => {
-    console.log(res.data);
-});
+export const fetchCountryHolidays = async (country_code: number) => {
+    const response: AxiosResponse<Holiday> = await api.get(`/holidays/${country_code}`);
+    return response.data;
+};
 
-export const fetchPassengers = api.get('/passengers').then((res) => {
-    console.log(res.data);
-});
+export const fetchPassengers = async () => {
+    const response: AxiosResponse<Holiday> = await api.get('/passengers');
+    return response.data;
+};
 
-export const fetchCountryPassengers = api.get('/passengers/{country_code}').then((res) => {
-    console.log(res.data);
-});
+export const fetchCountryPassengers = async (country_code: number) => {
+    const response: AxiosResponse<Holiday> = await api.get(`/passengers/${country_code}`);
+    return response.data;
+};
 
 export default api;

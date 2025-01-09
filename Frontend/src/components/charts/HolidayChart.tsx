@@ -1,11 +1,11 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
+import Holiday from '@/types/Holiday.ts';
 
-const data = [
-    { country: 'Aruba', public: 4, religious: 0, other: 0 },
-    // Ajouter d'autres pays...
-];
+type Props = {
+    data: Holiday[];
+};
 
-const HolidayChart = () => (
+const HolidayChart = ({ data }: Props) => (
     <BarChart width={600} height={300} data={data}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="country" />
