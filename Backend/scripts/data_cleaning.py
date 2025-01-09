@@ -40,8 +40,7 @@ def clean_data():
         global_holidays['type_of_travel'] = global_holidays['type_of_travel'].str.strip().str.lower()
         
         # Nettoyage des données passengers
-        monthly_passengers['total_passenger'] = monthly_passengers.groupby('country_code')['total_passenger'].transform(
-    lambda x: x.fillna(x.median())
+        monthly_passengers['total_passenger'] = monthly_passengers.groupby('country_code')['total_passenger'].transform(lambda x: x.fillna(x.median())
 )
         monthly_passengers['domestic'] = monthly_passengers['domestic'].fillna(0)
         monthly_passengers['international'] = monthly_passengers['international'].fillna(0)
