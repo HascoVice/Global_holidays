@@ -1,7 +1,8 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
+import Holiday from '@/types/Holiday.ts';
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api',
+    baseURL: 'http://localhost:8000',
 });
 
 // api.interceptors.request.use((config) => {
@@ -12,19 +13,20 @@ const api = axios.create({
 //     return config;
 // });
 
-api.get('/holidays').then((res) => {
+export const fetchHolidays = async () => {
+    const response: AxiosResponse<Holiday> = await api.get('/holidays');
+    return response.data;
+};
+
+export const fetchCountryHolidays = api.get('/holidays/{country_code}').then((res) => {
     console.log(res.data);
 });
 
-api.get('/holidays/{country_code}').then((res) => {
+export const fetchPassengers = api.get('/passengers').then((res) => {
     console.log(res.data);
 });
 
-api.get('/passengers').then((res) => {
-    console.log(res.data);
-});
-
-api.get('/passengers/{country_code}').then((res) => {
+export const fetchCountryPassengers = api.get('/passengers/{country_code}').then((res) => {
     console.log(res.data);
 });
 
