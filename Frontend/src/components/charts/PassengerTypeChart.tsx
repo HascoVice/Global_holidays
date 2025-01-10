@@ -6,7 +6,7 @@ import { RootState } from '@/store';
 const COLORS = ['#0088FE', '#FF8042'];
 
 const PassengerTypeChart: React.FC = () => {
-    const passengers = useSelector((state: RootState) => state.passengers.data);
+    const passengers = useSelector((state: RootState) => state.passengers.filteredData);
 
     const totalDomestic = passengers.reduce((sum, passenger) => sum + (passenger.domestic || 0), 0);
     const totalInternational = passengers.reduce(

@@ -12,8 +12,6 @@ import PassengerPieChart from '@/components/charts/PassengerPieChart.tsx';
 const DashboardPage: React.FC = () => {
     return (
         <div className="dashboard">
-            <h1>Dashboard</h1>
-
             {/* Graphs Section */}
             <div className="grid auto-rows-min gap-4 md:grid-cols-3">
                 <HolidayTrend />

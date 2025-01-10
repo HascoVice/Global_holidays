@@ -12,8 +12,8 @@ import {
 } from 'recharts';
 import { RootState } from '@/store';
 
-const HolidayTrend: React.FC = () => {
-    const holidays = useSelector((state: RootState) => state.holidays.data);
+const HolidayTrendChart: React.FC = () => {
+    const holidays = useSelector((state: RootState) => state.holidays.filteredData);
 
     const yearCounts = holidays.reduce((acc: Record<string, number>, holiday) => {
         const year = new Date(holiday.date).getFullYear();
@@ -49,4 +49,4 @@ const HolidayTrend: React.FC = () => {
     );
 };
 
-export default HolidayTrend;
+export default HolidayTrendChart;

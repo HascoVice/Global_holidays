@@ -13,7 +13,7 @@ import {
 import { RootState } from '@/store';
 
 const CountryPassengerChart: React.FC = () => {
-    const passengers = useSelector((state: RootState) => state.passengers.data);
+    const passengers = useSelector((state: RootState) => state.passengers.filteredData);
 
     const countryTotals = passengers.reduce((acc: Record<string, number>, passenger) => {
         const country = passenger.country_code;

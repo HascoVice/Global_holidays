@@ -13,7 +13,7 @@ import {
 import { RootState } from '@/store';
 
 const MonthlyPassengerChart: React.FC = () => {
-    const passengers = useSelector((state: RootState) => state.passengers.data);
+    const passengers = useSelector((state: RootState) => state.passengers.filteredData);
 
     const monthlyTotals = passengers.reduce((acc: Record<string, number>, passenger) => {
         const month = passenger.month;

@@ -13,7 +13,7 @@ import {
 import { RootState } from '@/store';
 
 const HolidayCountChart: React.FC = () => {
-    const holidays = useSelector((state: RootState) => state.holidays.data);
+    const holidays = useSelector((state: RootState) => state.holidays.filteredData);
 
     const yearCounts = holidays.reduce((acc: Record<string, number>, holiday) => {
         const year = new Date(holiday.date).getFullYear();
