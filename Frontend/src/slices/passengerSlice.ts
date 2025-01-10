@@ -24,35 +24,52 @@ const initialState: PassengerState = {
     countryFilter: null,
 };
 
-export const fetchPassengerData = createAsyncThunk(
-    'passengers/fetchPassengerData',
-    async (_, { getState }) => {
-        const state = getState() as { passengers: PassengerState };
-        const { page, limit } = state.passengers;
-        const response = await fetchPassengers(page * limit, limit);
+// Fetch initial passenger data
+export const fetchPassengerData = createAsyncThunk<
+    Passenger[],
+    void,
+    { rejectValue: { message: string } }
+>('passengers/fetchPassengerData', async (_, { rejectWithValue }) => {
+    try {
+        const response = await fetchPassengers(0, initialState.limit);
+        if (!response || (response as Passenger[]).length === 0) {
+            return rejectWithValue({ message: 'No data found' });
+        }
         return response;
+    } catch (error: any) {
+        return rejectWithValue({ message: error.message || 'Failed to fetch passenger data' });
     }
-);
+});
 
-export const fetchMorePassengerData = createAsyncThunk(
-    'passengers/fetchMorePassengerData',
-    async (_, { getState }) => {
-        const state = getState() as { passengers: PassengerState };
-        const { page, limit } = state.passengers;
+// Fetch more passenger data (pagination)
+export const fetchMorePassengerData = createAsyncThunk<
+    { data: Passenger[]; newPage: number; noMoreData: boolean },
+    void,
+    { rejectValue: { message: string } }
+>('passengers/fetchMorePassengerData', async (_, { getState, rejectWithValue }) => {
+    const state = getState() as { passengers: PassengerState };
+    const { page, limit, hasMoreData } = state.passengers;
 
-        if (!state.passengers.hasMoreData) return { data: [], newPage: page };
+    if (!hasMoreData) {
+        return { data: [], newPage: page, noMoreData: true };
+    }
 
+    try {
         const response = await fetchPassengers((page + 1) * limit, limit);
 
-        if (!response || (Array.isArray(response) && response.length === 0)) {
+        if (!response || (response as Passenger[]).length === 0) {
             return { data: [], newPage: page, noMoreData: true };
         }
 
-        if (!Array.isArray(response)) throw new Error(response?.message || 'Failed to fetch data.');
-
-        return { data: response, newPage: page + 1 };
+        return {
+            data: response,
+            newPage: page + 1,
+            noMoreData: (response as Passenger[]).length < limit,
+        };
+    } catch (error: any) {
+        return rejectWithValue({ message: error.message || 'Failed to fetch more passenger data' });
     }
-);
+});
 
 const passengerSlice = createSlice({
     name: 'passengers',
@@ -71,49 +88,49 @@ const passengerSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // Fetch initial data
             .addCase(fetchPassengerData.pending, (state) => {
                 state.status = 'loading';
+                state.error = null;
             })
             .addCase(fetchPassengerData.fulfilled, (state, action) => {
-                if (Array.isArray(action.payload)) {
-                    state.status = 'succeeded';
-                    state.data = action.payload;
-                    state.filteredData = state.countryFilter
-                        ? state.data.filter(
-                              (passenger) => passenger.country_code === state.countryFilter
-                          )
-                        : state.data;
-                } else {
-                    state.status = 'failed';
-                    state.error = action.payload?.message || 'Failed to fetch passenger data.';
-                }
+                state.status = 'succeeded';
+                state.data = action.payload;
+                state.filteredData = state.countryFilter
+                    ? state.data.filter(
+                          (passenger) => passenger.country_code === state.countryFilter
+                      )
+                    : state.data;
+                state.hasMoreData = action.payload.length >= state.limit;
             })
             .addCase(fetchPassengerData.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message || 'Failed to fetch passenger data';
+                state.error =
+                    (action.payload as { message: string })?.message ||
+                    'Failed to fetch passenger data';
             })
+            // Fetch more data
             .addCase(fetchMorePassengerData.pending, (state) => {
                 state.status = 'loading';
+                state.error = null;
             })
             .addCase(fetchMorePassengerData.fulfilled, (state, action) => {
-                if (Array.isArray(action.payload?.data)) {
-                    state.data = [...state.data, ...action.payload.data];
-                    state.filteredData = state.countryFilter
-                        ? state.data.filter(
-                              (passenger) => passenger.country_code === state.countryFilter
-                          )
-                        : state.data;
-                    state.page = action.payload.newPage;
-                    state.hasMoreData = !action.payload.noMoreData;
-                    state.status = 'succeeded';
-                } else {
-                    state.status = 'failed';
-                    state.error = 'Failed to fetch more passenger data.';
-                }
+                state.data = [...state.data, ...action.payload.data];
+                state.filteredData = state.countryFilter
+                    ? state.data.filter(
+                          (passenger) => passenger.country_code === state.countryFilter
+                      )
+                    : state.data;
+                state.page = action.payload.newPage;
+                state.hasMoreData = !action.payload.noMoreData;
+                state.status = 'succeeded';
             })
             .addCase(fetchMorePassengerData.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message || 'Failed to fetch more passenger data';
+                state.error =
+                    (action.payload as { message: string })?.message ||
+                    'Failed to fetch more passenger data';
+                state.hasMoreData = false;
             });
     },
 });

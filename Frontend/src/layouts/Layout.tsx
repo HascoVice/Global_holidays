@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Outlet, useLocation } from 'react-router-dom';
 import { AppSidebar } from '@/components/app-sidebar';
@@ -102,7 +102,8 @@ export default function Layout() {
         setIsPageLoading(false);
     };
 
-    const applyCountryFilter = () => {
+    const applyCountryFilter = (e) => {
+        e.preventDefault();
         dispatch(setHolidayCountryFilter(countryFilter));
         dispatch(setPassengerCountryFilter(countryFilter));
     };
@@ -135,17 +136,10 @@ export default function Layout() {
                             </Breadcrumb>
                         </div>
                         <div className="flex items-center gap-4 px-4">
-                            <div className="text-sm text-gray-500">
-                                <p>Holidays Loaded: {holidayCount}</p>
-                                <p>Passengers Loaded: {passengerCount}</p>
-                                {isAutoLoadStopped && (
-                                    <p className="text-green-600">All data has been loaded.</p>
-                                )}
-                            </div>
-                            <div className="flex items-center gap-2">
+                            <form className="flex items-center gap-2" onSubmit={applyCountryFilter}>
                                 <Input
                                     value={countryFilter}
-                                    onChange={(e) => setCountryFilter(e.target.value)}
+                                    onChange={(e) => setCountryFilter(e.target.value.toUpperCase())}
                                     placeholder="Enter country code"
                                     className="w-40"
                                 />
@@ -153,6 +147,7 @@ export default function Layout() {
                                     onClick={applyCountryFilter}
                                     disabled={!countryFilter}
                                     variant="default"
+                                    type="submit"
                                 >
                                     Apply Filter
                                 </Button>
@@ -160,23 +155,33 @@ export default function Layout() {
                                     onClick={clearCountryFilter}
                                     disabled={!countryFilter}
                                     variant="outline"
+                                    type="reset"
                                 >
                                     Clear Filter
                                 </Button>
+                            </form>
+                            <div className="flex items-center gap-2">
+                                <div className="text-sm text-gray-500">
+                                    <p>Holidays Loaded: {holidayCount}</p>
+                                    <p>Passengers Loaded: {passengerCount}</p>
+                                    {isAutoLoadStopped && (
+                                        <p className="text-green-600">All data has been loaded.</p>
+                                    )}
+                                </div>
+                                <Button
+                                    disabled={isPageLoading || isAutoLoadStopped}
+                                    onClick={handleLoadMore}
+                                >
+                                    {isPageLoading ? (
+                                        <>
+                                            <Loader2 className="animate-spin" />
+                                            Loading...
+                                        </>
+                                    ) : (
+                                        'Load More Data'
+                                    )}
+                                </Button>
                             </div>
-                            <Button
-                                disabled={isPageLoading || isAutoLoadStopped}
-                                onClick={handleLoadMore}
-                            >
-                                {isPageLoading ? (
-                                    <>
-                                        <Loader2 className="animate-spin" />
-                                        Loading...
-                                    </>
-                                ) : (
-                                    'Load More Data'
-                                )}
-                            </Button>
                         </div>
                     </header>
                     <div

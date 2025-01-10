@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { fetchHolidays } from '@/api';
+import { ApiError, fetchHolidays } from '@/api';
 import Holiday from '@/types/Holiday';
 
 interface HolidayState {
@@ -24,35 +24,52 @@ const initialState: HolidayState = {
     countryFilter: null,
 };
 
-export const fetchHolidayData = createAsyncThunk(
-    'holidays/fetchHolidayData',
-    async (_, { getState }) => {
-        const state = getState() as { holidays: HolidayState };
-        const { page, limit } = state.holidays;
-        const response = await fetchHolidays(page * limit, limit);
+// Fetch initial holiday data
+export const fetchHolidayData = createAsyncThunk<
+    Holiday[],
+    void,
+    { rejectValue: { message: string } }
+>('holidays/fetchHolidayData', async (_, { rejectWithValue }) => {
+    try {
+        const response = await fetchHolidays(0, initialState.limit);
+        if (!response || (response as Holiday[]).length === 0) {
+            return rejectWithValue({ message: 'No data found' });
+        }
         return response;
+    } catch (error: any) {
+        return rejectWithValue({ message: error.message || 'Failed to fetch holiday data' });
     }
-);
+});
 
-export const fetchMoreHolidayData = createAsyncThunk(
-    'holidays/fetchMoreHolidayData',
-    async (_, { getState }) => {
-        const state = getState() as { holidays: HolidayState };
-        const { page, limit } = state.holidays;
+// Fetch more holiday data (pagination)
+export const fetchMoreHolidayData = createAsyncThunk<
+    { data: Holiday[]; newPage: number; noMoreData: boolean },
+    void,
+    { rejectValue: { message: string } }
+>('holidays/fetchMoreHolidayData', async (_, { getState, rejectWithValue }) => {
+    const state = getState() as { holidays: HolidayState };
+    const { page, limit, hasMoreData } = state.holidays;
 
-        if (!state.holidays.hasMoreData) return { data: [], newPage: page };
+    if (!hasMoreData) {
+        return { data: [], newPage: page, noMoreData: true };
+    }
 
+    try {
         const response = await fetchHolidays((page + 1) * limit, limit);
 
-        if (!response || (Array.isArray(response) && response.length === 0)) {
+        if (!response || (response as Holiday[]).length === 0) {
             return { data: [], newPage: page, noMoreData: true };
         }
 
-        if (!Array.isArray(response)) throw new Error(response?.message || 'Failed to fetch data.');
-
-        return { data: response, newPage: page + 1 };
+        return {
+            data: response,
+            newPage: page + 1,
+            noMoreData: (response as Holiday[]).length < limit,
+        };
+    } catch (error: any) {
+        return rejectWithValue({ message: error.message || 'Failed to fetch more holiday data' });
     }
-);
+});
 
 const holidaySlice = createSlice({
     name: 'holidays',
@@ -71,49 +88,43 @@ const holidaySlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            // Fetch initial data
             .addCase(fetchHolidayData.pending, (state) => {
                 state.status = 'loading';
+                state.error = null;
             })
             .addCase(fetchHolidayData.fulfilled, (state, action) => {
-                if (Array.isArray(action.payload)) {
-                    state.status = 'succeeded';
-                    state.data = action.payload;
-                    state.filteredData = state.countryFilter
-                        ? state.data.filter(
-                              (holiday) => holiday.country_code === state.countryFilter
-                          )
-                        : state.data;
-                } else {
-                    state.status = 'failed';
-                    state.error = action.payload?.message || 'Failed to fetch holiday data.';
-                }
+                state.status = 'succeeded';
+                state.data = action.payload;
+                state.filteredData = state.countryFilter
+                    ? state.data.filter((holiday) => holiday.country_code === state.countryFilter)
+                    : state.data;
+                state.hasMoreData = action.payload.length >= state.limit;
             })
             .addCase(fetchHolidayData.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message || 'Failed to fetch holiday data';
+                state.error =
+                    (action.payload as ApiError)?.message || 'Failed to fetch holiday data';
             })
+            // Fetch more data
             .addCase(fetchMoreHolidayData.pending, (state) => {
                 state.status = 'loading';
+                state.error = null;
             })
             .addCase(fetchMoreHolidayData.fulfilled, (state, action) => {
-                if (Array.isArray(action.payload?.data)) {
-                    state.data = [...state.data, ...action.payload.data];
-                    state.filteredData = state.countryFilter
-                        ? state.data.filter(
-                              (holiday) => holiday.country_code === state.countryFilter
-                          )
-                        : state.data;
-                    state.page = action.payload.newPage;
-                    state.hasMoreData = !action.payload.noMoreData;
-                    state.status = 'succeeded';
-                } else {
-                    state.status = 'failed';
-                    state.error = 'Failed to fetch more holiday data.';
-                }
+                state.data = [...state.data, ...action.payload.data];
+                state.filteredData = state.countryFilter
+                    ? state.data.filter((holiday) => holiday.country_code === state.countryFilter)
+                    : state.data;
+                state.page = action.payload.newPage;
+                state.hasMoreData = !action.payload.noMoreData;
+                state.status = 'succeeded';
             })
             .addCase(fetchMoreHolidayData.rejected, (state, action) => {
                 state.status = 'failed';
-                state.error = action.error.message || 'Failed to fetch more holiday data';
+                state.error =
+                    (action.payload as ApiError)?.message || 'Failed to fetch more holiday data';
+                state.hasMoreData = false;
             });
     },
 });

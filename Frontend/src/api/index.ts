@@ -6,12 +6,17 @@ const LIMIT = 1000;
 
 // Create an Axios instance with a base configuration
 const api: AxiosInstance = axios.create({
-    baseURL: 'http://localhost:8000', // API base URL
-    timeout: 10000, // Request timeout in milliseconds
+    baseURL: 'http://localhost:8000',
+    timeout: 10000,
     headers: {
         'Content-Type': 'application/json',
     },
 });
+
+export type ApiError = {
+    status: number;
+    message: string;
+};
 
 // Response interceptor to handle global errors
 api.interceptors.response.use(

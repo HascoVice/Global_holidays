@@ -8,7 +8,6 @@ import {
     VisibilityState,
     flexRender,
     getCoreRowModel,
-    getPaginationRowModel,
     getSortedRowModel,
     getFilteredRowModel,
     useReactTable,

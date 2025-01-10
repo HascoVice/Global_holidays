@@ -4,7 +4,7 @@ import HolidayCountChart from '@/components/charts/HolidayCountChart.tsx';
 import HolidayReasonsChart from '@/components/charts/HolidayReasonsChart.tsx';
 import CountryPassengerChart from '@/components/charts/CountryPassengerChart.tsx';
 import MonthlyPassengerChart from '@/components/charts/MonthlyPassengerChart.tsx';
-import HolidayTrend from '@/components/charts/HolidayTrend.tsx';
+import HolidayTrend from '@/components/charts/HolidayTrendChart.tsx';
 import PassengerTypeChart from '@/components/charts/PassengerTypeChart.tsx';
 import PassengerTrendChart from '@/components/charts/PassengerTrendChart.tsx';
 import PassengerPieChart from '@/components/charts/PassengerPieChart.tsx';
