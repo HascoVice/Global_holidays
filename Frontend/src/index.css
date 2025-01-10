@@ -97,3 +97,57 @@
         @apply bg-background text-foreground;
     }
 }
+
+/* World Map Styles */
+.world-map-wrapper {
+    margin-bottom: 2rem;
+    height: 400px;
+}
+
+.world-map-country {
+    transition: all 200ms;
+    cursor: pointer;
+}
+
+.world-map-country:hover {
+    stroke: #000;
+    stroke-width: 1px;
+    opacity: 0.8;
+}
+
+.world-map-tooltip {
+    font-size: 12px;
+    font-weight: 500;
+    pointer-events: none;
+}
+.wrapper {
+    position: relative;
+    margin-bottom: 2rem;
+    height: 400px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.svg {
+    width: 100%;
+    height: 100%;
+}
+
+.country {
+    transition: all 200ms;
+    cursor: pointer;
+    vector-effect: non-scaling-stroke;
+}
+
+.country:hover {
+    opacity: 0.8;
+}
+
+.tooltip {
+    pointer-events: none;
+}
+
+.tooltipBg {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
