@@ -1,16 +1,26 @@
 from typing import Union
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from api.endpoints import holidays, passengers
 from api.data_manager import data_manager
 
 app = FastAPI()
 
-# Initialisation immédiate des données
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Add the frontend URL here
+    allow_credentials=True,  # Allow cookies and authentication headers
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all request headers
+)
+
+# Initialize data
 data_manager.initialize_data()
 
-# Inclusion des routers
+# Include routers
 app.include_router(holidays.router)
 app.include_router(passengers.router)
 
