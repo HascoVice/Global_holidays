@@ -1,15 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { RootState } from '@/store';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
+const COLORS = ['#0088FE', '#00C49F'];
 
 const PassengerPieChart: React.FC = () => {
-    // Select filtered passengers data from the store
     const passengers = useSelector((state: RootState) => state.passengers.filteredData);
 
-    // Calculate total domestic and international passengers
     const totalDomestic = passengers.reduce((sum, passenger) => sum + passenger.domestic, 0);
     const totalInternational = passengers.reduce(
         (sum, passenger) => sum + passenger.international,
@@ -22,7 +20,7 @@ const PassengerPieChart: React.FC = () => {
     ];
 
     return (
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={400}>
             <PieChart>
                 <Pie
                     data={chartData}
@@ -30,7 +28,7 @@ const PassengerPieChart: React.FC = () => {
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={100}
+                    outerRadius={120}
                     label
                 >
                     {chartData.map((entry, index) => (
@@ -38,6 +36,16 @@ const PassengerPieChart: React.FC = () => {
                     ))}
                 </Pie>
                 <Tooltip />
+                <Legend />
+                <text
+                    x={200}
+                    y={20}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    className="font-bold"
+                >
+                    Domestic vs. International Passengers
+                </text>
             </PieChart>
         </ResponsiveContainer>
     );

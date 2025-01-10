@@ -1,34 +1,49 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer,
+    Legend,
+} from 'recharts';
 import { RootState } from '@/store';
 
 const HolidayCountChart: React.FC = () => {
-    // Select filtered holidays data from the store
-    const holidays = useSelector((state: RootState) => state.holidays.filteredData);
+    const holidays = useSelector((state: RootState) => state.holidays.data);
 
-    // Transform data to count holidays by year
     const yearCounts = holidays.reduce((acc: Record<string, number>, holiday) => {
-        const year = new Date(holiday.date).getFullYear(); // Extract year from the date
+        const year = new Date(holiday.date).getFullYear();
         acc[year] = (acc[year] || 0) + 1;
         return acc;
     }, {});
 
-    const chartData = Object.keys(yearCounts)
-        .sort((a, b) => parseInt(a) - parseInt(b)) // Sort by year
-        .map((year) => ({
-            year,
-            count: yearCounts[parseInt(year)],
-        }));
+    const chartData = Object.keys(yearCounts).map((year) => ({
+        year: parseInt(year),
+        count: yearCounts[year],
+    }));
 
     return (
         <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis />
+                <XAxis dataKey="year" name="Year" unit="" />
+                <YAxis dataKey="count" name="Holidays Count" unit=" days" />
                 <Tooltip />
+                <Legend />
                 <Bar dataKey="count" fill="#82ca9d" />
+                <text
+                    x={200}
+                    y={20}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    className="font-bold"
+                >
+                    Number of Holidays Per Year
+                </text>
             </BarChart>
         </ResponsiveContainer>
     );

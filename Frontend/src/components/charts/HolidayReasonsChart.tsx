@@ -1,15 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { RootState } from '@/store';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
 const HolidayReasonsChart: React.FC = () => {
-    // Select filtered holidays data from the store
     const holidays = useSelector((state: RootState) => state.holidays.filteredData);
 
-    // Count frequency of holiday reasons
     const reasonCounts = holidays.reduce((acc: Record<string, number>, holiday) => {
         const reason = holiday.travel_reason;
         acc[reason] = (acc[reason] || 0) + 1;
@@ -21,11 +19,11 @@ const HolidayReasonsChart: React.FC = () => {
             name: reason,
             value: reasonCounts[reason],
         }))
-        .sort((a, b) => b.value - a.value) // Sort in descending order
+        .sort((a, b) => b.value - a.value)
         .slice(0, 20);
 
     return (
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={400}>
             <PieChart>
                 <Pie
                     data={chartData}
@@ -33,7 +31,7 @@ const HolidayReasonsChart: React.FC = () => {
                     nameKey="name"
                     cx="50%"
                     cy="50%"
-                    outerRadius={100}
+                    outerRadius={120}
                     label
                 >
                     {chartData.map((entry, index) => (
@@ -41,6 +39,16 @@ const HolidayReasonsChart: React.FC = () => {
                     ))}
                 </Pie>
                 <Tooltip />
+                <Legend />
+                <text
+                    x={200}
+                    y={20}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    className="font-bold"
+                >
+                    Top 20 Travel Reasons
+                </text>
             </PieChart>
         </ResponsiveContainer>
     );

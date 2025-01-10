@@ -1,13 +1,20 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+    LineChart,
+    Line,
+    XAxis,
+    YAxis,
+    Tooltip,
+    CartesianGrid,
+    ResponsiveContainer,
+    Legend,
+} from 'recharts';
 import { RootState } from '@/store';
 
 const PassengerTrendChart: React.FC = () => {
-    // Select filtered passengers data from the store
     const passengers = useSelector((state: RootState) => state.passengers.filteredData);
 
-    // Prepare data grouped by year and month
     const monthlyCounts = passengers.reduce((acc: Record<string, number>, passenger) => {
         const key = `${passenger.year}-${passenger.month}`;
         acc[key] = (acc[key] || 0) + passenger.total_passenger;
@@ -20,12 +27,23 @@ const PassengerTrendChart: React.FC = () => {
     });
 
     return (
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={400}>
             <LineChart data={chartData}>
-                <XAxis dataKey="month" />
-                <YAxis />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" name="Month" unit="" />
+                <YAxis name="Passengers" unit=" people" />
                 <Tooltip />
+                <Legend />
                 <Line type="monotone" dataKey="count" stroke="#82ca9d" />
+                <text
+                    x={200}
+                    y={20}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    className="font-bold"
+                >
+                    Monthly Passenger Trends
+                </text>
             </LineChart>
         </ResponsiveContainer>
     );

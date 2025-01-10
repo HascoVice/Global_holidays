@@ -8,36 +8,42 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
+    Legend,
 } from 'recharts';
 import { RootState } from '@/store';
 
 const MonthlyPassengerChart: React.FC = () => {
-    // Select filtered passengers data from the store
-    const passengers = useSelector((state: RootState) => state.passengers.filteredData);
+    const passengers = useSelector((state: RootState) => state.passengers.data);
 
-    // Aggregate passengers by month
     const monthlyTotals = passengers.reduce((acc: Record<string, number>, passenger) => {
-        const month = `${passenger.year}-${String(passenger.month).padStart(2, '0')}`; // Format as "YYYY-MM"
+        const month = passenger.month;
         acc[month] = (acc[month] || 0) + (passenger.total_passenger || 0);
         return acc;
     }, {});
 
-    // Sort data by month (chronological order)
-    const chartData = Object.keys(monthlyTotals)
-        .sort()
-        .map((month) => ({
-            month,
-            passengers: monthlyTotals[month],
-        }));
+    const chartData = Object.keys(monthlyTotals).map((month) => ({
+        month,
+        passengers: monthlyTotals[month],
+    }));
 
     return (
         <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" angle={-45} textAnchor="end" height={60} />
-                <YAxis />
+                <XAxis dataKey="month" name="Month" unit="" />
+                <YAxis dataKey="passengers" name="Passengers" unit=" people" />
                 <Tooltip />
+                <Legend />
                 <Line type="monotone" dataKey="passengers" stroke="#8884d8" />
+                <text
+                    x={200}
+                    y={20}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    className="font-bold"
+                >
+                    Monthly Passenger Totals
+                </text>
             </LineChart>
         </ResponsiveContainer>
     );

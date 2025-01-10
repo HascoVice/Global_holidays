@@ -5,39 +5,45 @@ import {
     Line,
     XAxis,
     YAxis,
-    Tooltip,
     CartesianGrid,
+    Tooltip,
     ResponsiveContainer,
+    Legend,
 } from 'recharts';
 import { RootState } from '@/store';
 
 const HolidayTrend: React.FC = () => {
-    // Select filtered holidays data from the store
-    const holidays = useSelector((state: RootState) => state.holidays.filteredData);
+    const holidays = useSelector((state: RootState) => state.holidays.data);
 
-    // Aggregate holidays by year
-    const yearlyTotals = holidays.reduce((acc: Record<number, number>, holiday) => {
+    const yearCounts = holidays.reduce((acc: Record<string, number>, holiday) => {
         const year = new Date(holiday.date).getFullYear();
         acc[year] = (acc[year] || 0) + 1;
         return acc;
     }, {});
 
-    // Prepare data for the chart
-    const chartData = Object.keys(yearlyTotals)
-        .sort((a, b) => parseInt(a) - parseInt(b)) // Sort by year
-        .map((year) => ({
-            year: parseInt(year),
-            holidays: yearlyTotals[parseInt(year)],
-        }));
+    const chartData = Object.keys(yearCounts).map((year) => ({
+        year: parseInt(year),
+        holidays: yearCounts[year],
+    }));
 
     return (
         <ResponsiveContainer width="100%" height={300}>
             <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="year" />
-                <YAxis />
+                <XAxis dataKey="year" name="Year" unit="" />
+                <YAxis dataKey="holidays" name="Number of Holidays" unit=" days" />
                 <Tooltip />
+                <Legend />
                 <Line type="monotone" dataKey="holidays" stroke="#8884d8" />
+                <text
+                    x={200}
+                    y={20}
+                    textAnchor="middle"
+                    dominantBaseline="central"
+                    className="font-bold"
+                >
+                    Annual Holiday Trends
+                </text>
             </LineChart>
         </ResponsiveContainer>
     );
