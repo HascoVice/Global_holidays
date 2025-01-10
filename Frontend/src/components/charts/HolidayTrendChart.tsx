@@ -11,6 +11,7 @@ import {
     Legend,
 } from 'recharts';
 import { RootState } from '@/store';
+import { formatNumber } from '@/helpers';
 
 const HolidayTrendChart: React.FC = () => {
     const holidays = useSelector((state: RootState) => state.holidays.filteredData);
@@ -31,8 +32,13 @@ const HolidayTrendChart: React.FC = () => {
             <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" name="Year" unit="" />
-                <YAxis dataKey="holidays" name="Number of Holidays" unit=" days" />
-                <Tooltip />
+                <YAxis
+                    dataKey="holidays"
+                    name="Number of Holidays"
+                    unit=" days"
+                    tickFormatter={(value) => formatNumber(value)}
+                />
+                <Tooltip formatter={(value: number) => formatNumber(value)} />
                 <Legend />
                 <Line type="monotone" dataKey="holidays" stroke="#8884d8" />
                 <text

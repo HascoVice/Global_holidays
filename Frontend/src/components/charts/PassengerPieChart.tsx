@@ -2,16 +2,18 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { RootState } from '@/store';
+import { formatNumber } from '@/helpers';
 
 const COLORS = ['#0088FE', '#00C49F'];
 
 const PassengerPieChart: React.FC = () => {
     const passengers = useSelector((state: RootState) => state.passengers.filteredData);
 
-    const totalDomestic = passengers.reduce((sum, passenger) => sum + passenger.domestic, 0);
-    const totalInternational = passengers.reduce(
-        (sum, passenger) => sum + passenger.international,
-        0
+    const totalDomestic = Math.round(
+        passengers.reduce((sum, passenger) => sum + passenger.domestic, 0)
+    );
+    const totalInternational = Math.round(
+        passengers.reduce((sum, passenger) => sum + passenger.international, 0)
     );
 
     const chartData = [
@@ -29,14 +31,14 @@ const PassengerPieChart: React.FC = () => {
                     cx="50%"
                     cy="50%"
                     outerRadius={120}
-                    label
+                    label={(entry) => `${entry.name}: ${formatNumber(entry.value)}`}
                 >
                     {chartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                 </Pie>
-                <Tooltip />
-                <Legend />
+                <Tooltip formatter={(value: number) => formatNumber(value)} />
+                <Legend formatter={(value) => formatNumber(value)} />
                 <text
                     x={200}
                     y={20}

@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer, Legend } from 'recharts';
 import { RootState } from '@/store';
+import { formatNumber } from '@/helpers';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
@@ -32,13 +33,12 @@ const HolidayReasonsChart: React.FC = () => {
                     cx="50%"
                     cy="50%"
                     outerRadius={120}
-                    label
                 >
                     {chartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                 </Pie>
-                <Tooltip />
+                <Tooltip formatter={(value: number) => formatNumber(value)} />
                 <Legend />
                 <text
                     x={200}

@@ -11,13 +11,14 @@ import {
     Legend,
 } from 'recharts';
 import { RootState } from '@/store';
+import { formatNumber } from '@/helpers';
 
 const PassengerTrendChart: React.FC = () => {
     const passengers = useSelector((state: RootState) => state.passengers.filteredData);
 
     const monthlyCounts = passengers.reduce((acc: Record<string, number>, passenger) => {
         const key = `${passenger.year}-${passenger.month}`;
-        acc[key] = (acc[key] || 0) + passenger.total_passenger;
+        acc[key] = Math.round((acc[key] || 0) + (passenger.total_passenger || 0));
         return acc;
     }, {});
 
@@ -31,8 +32,12 @@ const PassengerTrendChart: React.FC = () => {
             <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" name="Month" unit="" />
-                <YAxis name="Passengers" unit=" people" />
-                <Tooltip />
+                <YAxis
+                    name="Passengers"
+                    unit=" people"
+                    tickFormatter={(value) => formatNumber(value)}
+                />
+                <Tooltip formatter={(value: number) => formatNumber(value)} />
                 <Legend />
                 <Line type="monotone" dataKey="count" stroke="#82ca9d" />
                 <text

@@ -11,13 +11,14 @@ import {
     Legend,
 } from 'recharts';
 import { RootState } from '@/store';
+import { formatNumber } from '@/helpers';
 
 const CountryPassengerChart: React.FC = () => {
     const passengers = useSelector((state: RootState) => state.passengers.filteredData);
 
     const countryTotals = passengers.reduce((acc: Record<string, number>, passenger) => {
         const country = passenger.country_code;
-        acc[country] = (acc[country] || 0) + (passenger.total_passenger || 0);
+        acc[country] = Math.round((acc[country] || 0) + (passenger.total_passenger || 0));
         return acc;
     }, {});
 
@@ -31,8 +32,13 @@ const CountryPassengerChart: React.FC = () => {
             <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="country" name="Country Code" unit="" />
-                <YAxis dataKey="passengers" name="Passengers" unit=" people" />
-                <Tooltip />
+                <YAxis
+                    dataKey="passengers"
+                    name="Passengers"
+                    unit=" people"
+                    tickFormatter={(value) => formatNumber(value)}
+                />
+                <Tooltip formatter={(value: number) => formatNumber(value)} />
                 <Legend />
                 <Bar dataKey="passengers" fill="#82ca9d" />
                 <text

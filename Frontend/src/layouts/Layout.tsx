@@ -28,6 +28,7 @@ import { RootState } from '@/store';
 import { Button } from '@/components/ui/button.tsx';
 import { Input } from '@/components/ui/input';
 import { Loader2 } from 'lucide-react';
+import { formatNumber } from '@/helpers';
 
 export default function Layout() {
     const location = useLocation();
@@ -162,8 +163,8 @@ export default function Layout() {
                             </form>
                             <div className="flex items-center gap-2">
                                 <div className="text-sm text-gray-500">
-                                    <p>Holidays Loaded: {holidayCount}</p>
-                                    <p>Passengers Loaded: {passengerCount}</p>
+                                    <p>Holidays Loaded: {formatNumber(holidayCount)}</p>
+                                    <p>Passengers Loaded: {formatNumber(passengerCount)}</p>
                                     {isAutoLoadStopped && (
                                         <p className="text-green-600">All data has been loaded.</p>
                                     )}
