@@ -1,11 +1,7 @@
 services:
-  backend:
-    environment:
-      - PYTHONUNBUFFERED=1
-    build:
-      context: .
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./Backend:/app
-    restart: always
+    backend:
+        build:
+            context: ./Backend
+            dockerfile: Dockerfile
+        ports:
+            - '8000:8000'
