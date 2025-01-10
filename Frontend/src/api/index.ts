@@ -7,7 +7,7 @@ const LIMIT = 1000;
 // Create an Axios instance with a base configuration
 const api: AxiosInstance = axios.create({
     baseURL: 'http://localhost:8000',
-    timeout: 10000,
+    /*   timeout: 10000, */
     headers: {
         'Content-Type': 'application/json',
     },
@@ -136,6 +136,21 @@ export const fetchCountryPassengers = async (
     limit: number = LIMIT
 ): Promise<Passenger[] | { status: number; message: string } | null> => {
     return fetchData<Passenger[]>(`/passengers/${countryCode}`, { skip, limit });
+};
+
+export const createPassenger = async (passenger: Passenger): Promise<Passenger | null> => {
+    return postData<Passenger>('/passengers', passenger);
+};
+
+export const updatePassenger = async (
+    id: number,
+    passenger: Passenger
+): Promise<Passenger | null> => {
+    return updateData<Passenger>(`/passengers/${id}`, passenger);
+};
+
+export const deletePassenger = async (id: number): Promise<void | null> => {
+    return deleteData<void>(`/passengers/${id}`);
 };
 
 export default api;
