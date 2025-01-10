@@ -1,18 +1,18 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { PieChart, Pie, Tooltip, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { RootState } from '@/store';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
+const COLORS = ['#0088FE', '#FF8042'];
 
-const PassengerPieChart: React.FC = () => {
+const PassengerTypeChart: React.FC = () => {
     // Select filtered passengers data from the store
     const passengers = useSelector((state: RootState) => state.passengers.filteredData);
 
-    // Calculate total domestic and international passengers
-    const totalDomestic = passengers.reduce((sum, passenger) => sum + passenger.domestic, 0);
+    // Aggregate domestic and international passengers
+    const totalDomestic = passengers.reduce((sum, passenger) => sum + (passenger.domestic || 0), 0);
     const totalInternational = passengers.reduce(
-        (sum, passenger) => sum + passenger.international,
+        (sum, passenger) => sum + (passenger.international || 0),
         0
     );
 
@@ -43,4 +43,4 @@ const PassengerPieChart: React.FC = () => {
     );
 };
 
-export default PassengerPieChart;
+export default PassengerTypeChart;

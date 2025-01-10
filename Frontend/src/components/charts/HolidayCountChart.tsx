@@ -1,46 +1,37 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    Tooltip,
-    CartesianGrid,
-    ResponsiveContainer,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { RootState } from '@/store';
 
-const HolidayTrend: React.FC = () => {
+const HolidayCountChart: React.FC = () => {
     // Select filtered holidays data from the store
     const holidays = useSelector((state: RootState) => state.holidays.filteredData);
 
-    // Aggregate holidays by year
-    const yearlyTotals = holidays.reduce((acc: Record<number, number>, holiday) => {
-        const year = new Date(holiday.date).getFullYear();
+    // Transform data to count holidays by year
+    const yearCounts = holidays.reduce((acc: Record<string, number>, holiday) => {
+        const year = new Date(holiday.date).getFullYear(); // Extract year from the date
         acc[year] = (acc[year] || 0) + 1;
         return acc;
     }, {});
 
-    // Prepare data for the chart
-    const chartData = Object.keys(yearlyTotals)
+    const chartData = Object.keys(yearCounts)
         .sort((a, b) => parseInt(a) - parseInt(b)) // Sort by year
         .map((year) => ({
-            year: parseInt(year),
-            holidays: yearlyTotals[parseInt(year)],
+            year,
+            count: yearCounts[parseInt(year)],
         }));
 
     return (
         <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={chartData}>
+            <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="year" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="holidays" stroke="#8884d8" />
-            </LineChart>
+                <Bar dataKey="count" fill="#82ca9d" />
+            </BarChart>
         </ResponsiveContainer>
     );
 };
 
-export default HolidayTrend;
+export default HolidayCountChart;

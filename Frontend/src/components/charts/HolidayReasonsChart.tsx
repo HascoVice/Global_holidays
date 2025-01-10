@@ -5,21 +5,24 @@ import { RootState } from '@/store';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
-const PassengerPieChart: React.FC = () => {
-    // Select filtered passengers data from the store
-    const passengers = useSelector((state: RootState) => state.passengers.filteredData);
+const HolidayReasonsChart: React.FC = () => {
+    // Select filtered holidays data from the store
+    const holidays = useSelector((state: RootState) => state.holidays.filteredData);
 
-    // Calculate total domestic and international passengers
-    const totalDomestic = passengers.reduce((sum, passenger) => sum + passenger.domestic, 0);
-    const totalInternational = passengers.reduce(
-        (sum, passenger) => sum + passenger.international,
-        0
-    );
+    // Count frequency of holiday reasons
+    const reasonCounts = holidays.reduce((acc: Record<string, number>, holiday) => {
+        const reason = holiday.travel_reason;
+        acc[reason] = (acc[reason] || 0) + 1;
+        return acc;
+    }, {});
 
-    const chartData = [
-        { name: 'Domestic', value: totalDomestic },
-        { name: 'International', value: totalInternational },
-    ];
+    const chartData = Object.keys(reasonCounts)
+        .map((reason) => ({
+            name: reason,
+            value: reasonCounts[reason],
+        }))
+        .sort((a, b) => b.value - a.value) // Sort in descending order
+        .slice(0, 20);
 
     return (
         <ResponsiveContainer width="100%" height={300}>
@@ -43,4 +46,4 @@ const PassengerPieChart: React.FC = () => {
     );
 };
 
-export default PassengerPieChart;
+export default HolidayReasonsChart;
